@@ -11,6 +11,10 @@ var input = {
         }
     },
     settings: {
+        optimizer: {
+            enabled: true, // Enable the optimizer
+            runs: 200      // Optimize for how many times you expect the code to be executed
+        },
         outputSelection: {
             '*': {
                 '*': ['abi', 'evm.bytecode']
