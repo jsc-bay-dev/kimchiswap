@@ -1,17 +1,31 @@
 import React from "react";
 import { FaExchangeAlt } from "react-icons/fa";
 import "./Exchange.css";
+import { BrowserProvider } from "ethers";
+
 
 const Exchange = () => {
+
+
+  // - compile
+  // - deploy
+  // - connect wallet
+
+  
+
+
+
+
+
   return (
     <div className="exchange_window">
-      <div className="currency_a"></div>
+      <div className="currency_a">BTC</div>
       <div className="swap_arrow">
         <div className="swap_arrow button">
-            <FaExchangeAlt size={24}/>
+            <FaExchangeAlt className="swap_icon" size={24} />
         </div>
       </div>
-      <div className="currency_b"></div>
+      <div className="currency_b">KCH</div>
     </div>
   );
 };
