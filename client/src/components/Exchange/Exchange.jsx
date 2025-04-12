@@ -2,14 +2,18 @@ import React from "react";
 import { FaExchangeAlt } from "react-icons/fa";
 import "./Exchange.css";
 import { BrowserProvider } from "ethers";
+import compileHandler from "../../utils/compile";
+import Compiler from "../Compiler/Compiler";
 
 
 const Exchange = () => {
 
 
-  // - compile
-  // - deploy
-  // - connect wallet
+  const kimchiCoinPath = '../../contracts/KimchiCoin.sol';
+  const buildPath = '../../../../build';
+
+  compilerHandler(kimchiCoinPath, buildPath);
+  
 
   
 
