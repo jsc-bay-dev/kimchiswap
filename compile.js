@@ -5,6 +5,15 @@ const path = require("path");
 const ensureDirectoryExists = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
+  } else {
+    fs.readdirSync(dir).forEach((file) => {
+      const filePath = path.join(dir, file);
+      if (fs.lstatSync(filePath).isDirectory()) {
+        fs.rmdirSync(filePath, { recursive: true });
+      } else {
+        fs.unlinkSync(filePath);
+      }
+    });
   }
 };
 
