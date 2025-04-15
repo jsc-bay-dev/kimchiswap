@@ -89,6 +89,7 @@ const interactWithContract = async (wallet, contract) => {
     "Transfer from",
     "Approve third party",
     "Check allowance",
+    "Total supply",
     "Exit",
   ];
 
@@ -124,28 +125,39 @@ const interactWithContract = async (wallet, contract) => {
     } else if (selection === "Transfer to") {
       try {
         const { recipient, amount } = await inquireTransferTo();
-        await transferTo(contract, recipient, amount);
+        const tx = await contract.transfer(recipient, amount);
+        console.log(`Transfer of ${ethers.formatUnits(amount, 18)} made to ${recipient}.`);
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Transfer from") {
       try {
         const { sender, recipient, amount } = await inquireTransferFrom();
-        await transferFrom(sender, recipient, amount);
+        const txFrom = await contract.transferFrom(sender, recipient, amount);
+        console.log(`Transfer of ${ethers.formatUnits(amount, 18)} received from ${sender}.`);
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Approve third party") {
       try {
         const { spender, amount } = await inquireApprove();
-        await approve(spender, amount);
+        const approval = await contract.approve(spender, amount);
+        console.log(`${spender} has been authorized to spend ${ethers.formatUnits(amount, 18)}.`);
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Check allowance") {
       try {
         const { owner, spender } = await inquireAllowance();
-        await allowance(owner, spender);
+        const allowance = await contract.allowance(owner, spender);
+        console.log(`${spender} may spend ${ethers.formatUnits(allowance, 18)} more ___.`);
+      } catch (error) {
+        console.error("An error occurred during the transfer:", error);
+      }
+    } else if (selection === "Total supply") {
+      try {
+        const totalSupply = await contract.totalSupply();
+        console.log(`Total supply: ${ethers.formatUnits(totalSupply, 18)} KCH`);
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
@@ -163,6 +175,6 @@ deployContract(wallet)
     console.log("Deployment successful! Contract address:", contract.address);
 
     // Start interacting with the contract
-    interactWithContract( wallet, contract);
+    interactWithContract(wallet, contract);
   })
   .catch((error) => console.error("Deployment failed:", error));
