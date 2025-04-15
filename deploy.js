@@ -1,6 +1,19 @@
 const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
+const inquirer = require("inquirer");
+const {
+  totalSupply,
+  balanceOf,
+  transferTo,
+  transferFrom,
+  approve,
+  allowance,
+  inquireTransferTo,
+  inquireTransferFrom,
+  inquireApprove,
+  inquireAllowance
+} = require("./utils");
 require("dotenv").config();
 
 // Load abi and bytecode
@@ -74,33 +87,87 @@ const keepAlive = async () => {
   }, 60000); // Log every 60 seconds
 };
 
-const readline = require("readline");
+const interactWithContract = async (provider, wallet, contractAddress) => {
+  const contract = new ethers.Contract(contractAddress, abi, provider);
 
-const interactWithContract = async (provider, contractAddress) => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  const fx = [
+    "Check balance",
+    "Transfer to",
+    "Transfer from",
+    "Approve third party",
+    "Check allowance",
+    "Exit",
+  ];
 
-  console.log(`Contract deployed at address: ${contractAddress}`);
-  console.log("You can now interact with the contract. Type 'exit' to quit.");
+  const userInput = async () => {
+    const { input } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "action",
+        message: "Select an action:",
+        choices: fx,
+      },
+    ]);
 
-  rl.on("line", async (input) => {
-    if (input.trim().toLowerCase() === "exit") {
+    return input;
+  };
+
+  while (true) {
+    const selection = await userInput();
+    console.log("You selected:", selection);
+
+    if (selection === "Check balance") {
+      try {
+        const balance = await contract.balanceOf(wallet.address);
+        console.log(
+          "Balance of wallet:",
+          ethers.formatUnits(balance, 18),
+          "KCH"
+        );
+      } catch (error) {
+        console.error("Error checking balance:", error);
+      }
+    } else if (selection === "Transfer to") {
+      try {
+        const { recipient, amount } = await inquireTransferTo();
+        await transferTo(contract, recipient, amount);
+      } catch (error) {
+        console.error("An error occurred during the transfer:", error);
+      }
+    } else if (selection === "Transfer from") {
+      try {
+        const { sender, recipient, amount } = await inquireTransferFrom();
+        await transferFrom(sender, recipient, amount);
+      } catch (error) {
+        console.error("An error occurred during the transfer:", error);
+      }
+    } else if (selection === "Approve third party") {
+      try {
+        const { spender, amount } = await inquireApprove();
+        await approve(spender, amount);
+      } catch (error) {
+        console.error("An error occurred during the transfer:", error);
+      }
+    } else if (selection === "Check allowance") {
+      try {
+        const { owner, spender } = await inquireAllowance();
+        await allowance(owner, spender);
+      } catch (error) {
+        console.error("An error occurred during the transfer:", error);
+      }
+    } else if (selection === "Exit") {
       console.log("Exiting...");
-      rl.close();
-      process.exit(0);
+      break;
     } else {
-      console.log(`You entered: ${input}`);
-      // Add logic to interact with the contract here
+      console.log("Action not implemented yet.");
     }
-  });
+  }
 };
 
 deployContract()
   .then((address) => {
     console.log("Deployment successful! Contract address:", address);
     // keepAlive();
-    interactWithContract();
+    interactWithContract(provider, wallet, address);
   })
   .catch((error) => console.error("Deployment failed:", error));
