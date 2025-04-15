@@ -3,12 +3,6 @@ const fs = require("fs");
 const path = require("path");
 const inquirer = require("inquirer").default;
 const {
-  totalSupply,
-  balanceOf,
-  transferTo,
-  transferFrom,
-  approve,
-  allowance,
   inquireTransferTo,
   inquireTransferFrom,
   inquireApprove,
@@ -54,7 +48,7 @@ const deployContract = async (wallet) => {
       console.log("- Sepolia Faucet (Infura): https://faucet.sepolia.dev/");
       throw new Error("Insufficient balance to deploy the contract.");
     } else {
-      console.log("Wallet balance:", ethers.formatEther(balance), "KCH");
+      console.log("Wallet balance:", ethers.formatEther(balance), "ETH");
     }
 
     //create ContractFactory
@@ -82,6 +76,8 @@ const deployContract = async (wallet) => {
 const interactWithContract = async (wallet, contract) => {
   const deployedContract = new ethers.Contract(contract.target, abi, wallet);
   console.log("Interacting with contract at address:", deployedContract.target);
+
+  const tokenSymbol = await deployedContract.symbol();
 
   const fx = [
     "Check balance",
@@ -112,52 +108,73 @@ const interactWithContract = async (wallet, contract) => {
 
     if (selection === "Check balance") {
       try {
-        const balance = await contract.balanceOf(wallet.address);
+        const balance = await deployedContract.balanceOf(wallet.address);
         console.log(
-          "Balance of wallet:",
-          ethers.formatUnits(balance, 18),
-          "KCH"
+          `Balance of wallet: ${ethers.formatUnits(balance, 18)} ${tokenSymbol}`
         );
       } catch (error) {
-        console.log("Contract:", contract);
+        console.log("Contract:", deployedContract);
         console.error("Error checking balance:", error);
       }
     } else if (selection === "Transfer to") {
       try {
         const { recipient, amount } = await inquireTransferTo();
-        const tx = await contract.transfer(recipient, amount);
-        console.log(`Transfer of ${ethers.formatUnits(amount, 18)} made to ${recipient}.`);
+        const tx = await deployedContract.transfer(
+          recipient,
+          ethers.parseUnits(amount, 18)
+        );
+        console.log(
+          `Transfer of ${amount} ${tokenSymbol} made to ${recipient}.`
+        );
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Transfer from") {
       try {
         const { sender, recipient, amount } = await inquireTransferFrom();
-        const txFrom = await contract.transferFrom(sender, recipient, amount);
-        console.log(`Transfer of ${ethers.formatUnits(amount, 18)} received from ${sender}.`);
+        const txFrom = await deployedContract.transferFrom(
+          sender,
+          recipient,
+          ethers.parseUnits(amount, 18)
+        );
+        console.log(
+          `Transfer of ${amount} ${tokenSymbol} received from ${sender}.`
+        );
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Approve third party") {
       try {
         const { spender, amount } = await inquireApprove();
-        const approval = await contract.approve(spender, amount);
-        console.log(`${spender} has been authorized to spend ${ethers.formatUnits(amount, 18)}.`);
+        const approval = await deployedContract.approve(
+          spender,
+          ethers.parseUnits(amount, 18)
+        );
+        console.log(
+          `${spender} has been authorized to spend ${amount} ${tokenSymbol}.`
+        );
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Check allowance") {
       try {
         const { owner, spender } = await inquireAllowance();
-        const allowance = await contract.allowance(owner, spender);
-        console.log(`${spender} may spend ${ethers.formatUnits(allowance, 18)} more ___.`);
+        const allowance = await deployedContract.allowance(owner, spender);
+        console.log(
+          `${spender} may spend ${ethers.formatUnits(
+            allowance,
+            18
+          )} ${tokenSymbol} more.`
+        );
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
     } else if (selection === "Total supply") {
       try {
-        const totalSupply = await contract.totalSupply();
-        console.log(`Total supply: ${ethers.formatUnits(totalSupply, 18)} KCH`);
+        const totalSupply = await deployedContract.totalSupply();
+        console.log(
+          `Total supply: ${ethers.formatUnits(totalSupply, 18)} ${tokenSymbol}`
+        );
       } catch (error) {
         console.error("An error occurred during the transfer:", error);
       }
