@@ -1,7 +1,7 @@
 const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
-const inquirer = require("inquirer");
+const inquirer = require("inquirer").default;
 const {
   totalSupply,
   balanceOf,
@@ -12,7 +12,7 @@ const {
   inquireTransferTo,
   inquireTransferFrom,
   inquireApprove,
-  inquireAllowance
+  inquireAllowance,
 } = require("./utils");
 require("dotenv").config();
 
@@ -23,27 +23,26 @@ const binPath = path.resolve(__dirname, "build", "KimchiCoin.bin");
 const abi = JSON.parse(fs.readFileSync(abiPath, "utf-8"));
 const bytecode = fs.readFileSync(binPath, "utf-8");
 
+// Initialize provider and wallet globally
+const provider = new ethers.JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+// Log provider connection
+provider
+  .getBlockNumber()
+  .then((blockNumber) =>
+    console.log(
+      "Connected to Sepolia Infura Network. Current block number:",
+      blockNumber
+    )
+  )
+  .catch((error) =>
+    console.error("Error connecting to Ethereum provider:", error)
+  );
 // Deployment Function
 
-const deployContract = async () => {
+const deployContract = async (wallet) => {
   try {
-    //connect to ethereum provider
-    const provider = new ethers.JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
-    provider
-      .getBlockNumber()
-      .then((blockNumber) =>
-        console.log(
-          "Connected to Sepolia Infura Network. Current block number:",
-          blockNumber
-        )
-      )
-      .catch((error) =>
-        console.error("Error connecting to Ethereum provider:", error)
-      );
-    // create wallet instance. use private key.
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-    console.log("Deploying contract from account: ", wallet.address);
-
     // check wallet balance
     const balance = await provider.getBalance(wallet.address);
     if (balance === 0n) {
@@ -73,22 +72,16 @@ const deployContract = async () => {
     console.log("Transaction hash:", contract.deploymentTransaction().hash);
     await contract.deploymentTransaction().wait();
     console.log("Contract deployed at address:", contract.target);
-    return contract.target;
+    return { contract };
   } catch (error) {
     console.error("Error deploying contract:", error);
     throw error;
   }
 };
 
-const keepAlive = async () => {
-  console.log("Contract deployed. Keeping the provider active...");
-  setInterval(() => {
-    console.log("Provider is still active...");
-  }, 60000); // Log every 60 seconds
-};
-
-const interactWithContract = async (provider, wallet, contractAddress) => {
-  const contract = new ethers.Contract(contractAddress, abi, provider);
+const interactWithContract = async (wallet, contract) => {
+  const deployedContract = new ethers.Contract(contract.target, abi, wallet);
+  console.log("Interacting with contract at address:", deployedContract.target);
 
   const fx = [
     "Check balance",
@@ -100,7 +93,7 @@ const interactWithContract = async (provider, wallet, contractAddress) => {
   ];
 
   const userInput = async () => {
-    const { input } = await inquirer.prompt([
+    const { action } = await inquirer.prompt([
       {
         type: "list",
         name: "action",
@@ -109,7 +102,7 @@ const interactWithContract = async (provider, wallet, contractAddress) => {
       },
     ]);
 
-    return input;
+    return action;
   };
 
   while (true) {
@@ -125,6 +118,7 @@ const interactWithContract = async (provider, wallet, contractAddress) => {
           "KCH"
         );
       } catch (error) {
+        console.log("Contract:", contract);
         console.error("Error checking balance:", error);
       }
     } else if (selection === "Transfer to") {
@@ -164,10 +158,11 @@ const interactWithContract = async (provider, wallet, contractAddress) => {
   }
 };
 
-deployContract()
-  .then((address) => {
-    console.log("Deployment successful! Contract address:", address);
-    // keepAlive();
-    interactWithContract(provider, wallet, address);
+deployContract(wallet)
+  .then(({ contract }) => {
+    console.log("Deployment successful! Contract address:", contract.address);
+
+    // Start interacting with the contract
+    interactWithContract( wallet, contract);
   })
   .catch((error) => console.error("Deployment failed:", error));
