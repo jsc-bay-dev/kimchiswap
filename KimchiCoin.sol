@@ -1,7 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract KimchiCoin {
+interface IERC20 {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+contract KimchiCoin is IERC20 {
     string public name = "KimchiCoin";
     string public symbol = "KCH";
     uint8 public decimals = 18;
@@ -14,36 +26,50 @@ contract KimchiCoin {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     constructor(uint256 initialSupply) {
+        require(initialSupply > 0, "Initial supply must be greater than 0");
         totalSupply = initialSupply * (10 ** uint256(decimals));
         balances[msg.sender] = totalSupply;
         emit Transfer(address(0), msg.sender, totalSupply);
     }
 
-    function balanceOf(address account) public view returns (uint256) {
+    function totalSupply() public view override returns (uint256) {
+        return totalSupply;
+    }
+
+    function balanceOf(address account) public view override returns (uint256) {
         return balances[account];
     }
 
-    function transfer(address recipient, uint256 amount) public returns (bool) {
-        require(balances[msg.sender] >= amount, "Insufficient balance");
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        require(recipient != address(0), "ERC20: transfer to the zero address");
+        require(balances[msg.sender] >= amount, "ERC20: transfer amount exceeds balance");
+        require(amount > 0, "ERC20: transfer amount must be greater than zero");
+        
         balances[msg.sender] -= amount;
         balances[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
 
-    function allowance(address owner, address spender) public view returns (uint256) {
+    function allowance(address owner, address spender) public view override returns (uint256) {
         return allowances[owner][spender];
     }
 
-    function approve(address spender, uint256 amount) public returns (bool) {
+    function approve(address spender, uint256 amount) public override returns (bool) {
+        require(spender != address(0), "ERC20: approve to the zero address");
+        
         allowances[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
-        require(balances[sender] >= amount, "Insufficient balance");
-        require(allowances[sender][msg.sender] >= amount, "Allowance exceeded");
+    function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
+        require(sender != address(0), "ERC20: transfer from the zero address");
+        require(recipient != address(0), "ERC20: transfer to the zero address");
+        require(balances[sender] >= amount, "ERC20: transfer amount exceeds balance");
+        require(allowances[sender][msg.sender] >= amount, "ERC20: transfer amount exceeds allowance");
+        require(amount > 0, "ERC20: transfer amount must be greater than zero");
+        
         balances[sender] -= amount;
         balances[recipient] += amount;
         allowances[sender][msg.sender] -= amount;
