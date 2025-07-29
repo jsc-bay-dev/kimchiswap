@@ -4,6 +4,7 @@ import { useState } from 'react'
 const Tracker = () => {
     const [data, setData] = useState({})
 
+    // move to back end
     const fetchData = async () => {
         const response = await fetch('https://pro-api.coinmarketcap.com/40fd3ca7-5ad4-403d-88e0-85453f44f192', {
             method: 'POST',
