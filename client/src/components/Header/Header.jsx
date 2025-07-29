@@ -1,4 +1,4 @@
-import React from 'react'
+import './Header.css'
 
 const Header = (isLoggedIn) => {
     const authHandler = async (params) => {
@@ -8,9 +8,8 @@ const Header = (isLoggedIn) => {
   return (
     <header>
         <div className="logo">
-            <image className="kimchi_logo"></image>
         </div>
-        <div className="title">KimchiSwap</div>
+        <h1 className="title">KimchiSwap</h1>
         <div className="auth">
             {isLoggedIn ? 
                 <button className="log_out">Log Out</button> 

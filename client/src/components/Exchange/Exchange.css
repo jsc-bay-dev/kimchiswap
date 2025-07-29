@@ -1,0 +1,272 @@
+/* Exchange Container - Main layout */
+.exchange_container {
+    display: flex;
+    flex-direction: column;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px;
+    background: linear-gradient(135deg, #ffffff 0%, #fef7f0 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 107, 53, 0.1);
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.exchange_container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+    animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* Exchange Cards - Token input sections */
+.exchange_card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff5f0 0%, #ffffff 100%);
+    border: 2px solid rgba(255, 107, 53, 0.15);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.exchange_card:hover {
+    border-color: rgba(255, 107, 53, 0.3);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.15);
+    transform: translateY(-2px);
+}
+
+.exchange_card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.exchange_card:hover::after {
+    left: 100%;
+}
+
+/* Labels */
+.exchange_card label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8b4513;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Input container */
+.exchange_card > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Select dropdowns */
+.exchange_card select {
+    flex: 1;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1.5px solid rgba(255, 107, 53, 0.2);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ff6b35' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.exchange_card select:hover {
+    border-color: rgba(255, 107, 53, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.1);
+}
+
+.exchange_card select:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+/* Number inputs */
+.exchange_card input[type="number"] {
+    width: 120px;
+    padding: 14px 16px;
+    background: transparent;
+    border: 1.5px solid rgba(255, 107, 53, 0.2);
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: right;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.exchange_card input[type="number"]:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.exchange_card input[type="number"]:read-only {
+    background: #f8f9fa;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.exchange_card input[type="number"]::placeholder {
+    color: #aaa;
+    font-weight: 400;
+}
+
+/* Remove number input arrows */
+.exchange_card input[type="number"]::-webkit-outer-spin-button,
+.exchange_card input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.exchange_card input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Swap Button */
+.swap_button {
+    align-self: center;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff6b35 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 200px;
+}
+
+.swap_button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+    background: linear-gradient(135deg, #e55a2b 0%, #e8861b 50%, #e55a2b 100%);
+}
+
+.swap_button:active {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 6px 15px rgba(255, 107, 53, 0.3);
+}
+
+.swap_button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.swap_button:hover::before {
+    left: 100%;
+}
+
+/* Container-specific styles */
+.from_container {
+    order: 1;
+}
+
+.to_container {
+    order: 3;
+}
+
+.swap_button {
+    order: 2;
+    margin: 16px 0;
+}
+
+.swap_button > button {
+    padding: none;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .exchange_container {
+        margin: 0 16px;
+        padding: 20px;
+        max-width: none;
+    }
+    
+    .exchange_card {
+        padding: 16px;
+    }
+    
+    .exchange_card > div {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .exchange_card select,
+    .exchange_card input[type="number"] {
+        width: 100%;
+    }
+    
+    .swap_button {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Loading state (for future use) */
+.exchange_container.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.exchange_container.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 2px solid #ff6b35;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
