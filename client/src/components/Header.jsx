@@ -1,17 +1,22 @@
 import React from 'react'
 
-const Header = () => {
-    //useState: isLoggedIn
-    //useState: isLoading
+const Header = (isLoggedIn) => {
+    const authHandler = async (params) => {
+        
+    }
 
   return (
     <header>
-        <div className="logo"></div>
-        <div className="title"></div>
+        <div className="logo">
+            <image className="kimchi_logo"></image>
+        </div>
+        <div className="title">KimchiSwap</div>
         <div className="auth">
-            <button className="auth">
-
-            </button>
+            {isLoggedIn ? 
+                <button className="log_out">Log Out</button> 
+                :
+                <button className="sign_in">Sign In</button> 
+            }
         </div>
     </header>
   )
