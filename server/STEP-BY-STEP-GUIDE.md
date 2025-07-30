@@ -221,7 +221,7 @@ KIMCHICOIN_CONTRACT_ADDRESS=0x...
 
 # External APIs
 COINMARKETCAP_API_KEY=your-coinmarketcap-api-key
-COINGECKO_API_URL=https://api.coingecko.com/api/v3
+COINMARKETCAP_API_URL=https://pro-api.coinmarketcap.com
 
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
