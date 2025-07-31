@@ -30,7 +30,7 @@
     },
     "include": [
       "src/**/*"
-    ],
+, "utils", "middleware"    ],
     "exclude": [
       "node_modules",
       "dist",

@@ -413,7 +413,7 @@ export const rateLimiter = rateLimit({
 Create `src/index.ts`:
 
 ```typescript
-import express from 'express';
+import express from 'express'; 
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
