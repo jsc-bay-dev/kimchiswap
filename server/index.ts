@@ -17,7 +17,8 @@ import { rateLimiter } from './middleware/rateLimiter';
 // Import logger
 import { logger } from './utils/logger';
 
-const app = express();
+// creates server
+const app = express(); 
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -26,9 +27,10 @@ const io = new Server(server, {
   }
 });
 
+// establishes port
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// Middleware to improve the way data gets received and is processed
 app.use(helmet());
 app.use(compression());
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
