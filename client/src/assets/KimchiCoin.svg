@@ -1,0 +1,40 @@
+<svg
+  width="120"
+  height="120"
+  viewBox="0 0 120 120"
+  xmlns="http://www.w3.org/2000/svg"
+  style="display: block; margin: 0 auto;"
+>
+  <!-- Coin base -->
+  <circle cx="60" cy="60" r="54" fill="#FFD700" stroke="#E5B100" stroke-width="6" />
+  
+  <!-- Inner shadow for depth -->
+  <ellipse cx="60" cy="68" rx="44" ry="38" fill="#FFF3B0" opacity="0.4" />
+  
+  <!-- Coin shine -->
+  <ellipse
+    cx="48"
+    cy="48"
+    rx="10"
+    ry="4"
+    fill="#FFF"
+    opacity="0.6"
+    transform="rotate(-20 48 48)"
+  />
+  
+  <!-- "KCH" text on the coin -->
+  <text
+    x="60"
+    y="65"
+    text-anchor="middle"
+    font-family="'Segoe UI', Arial, sans-serif"
+    font-weight="bold"
+    font-size="28"
+    fill="#D32F2F"
+    stroke="#FFF"
+    stroke-width="2"
+    paint-order="stroke"
+  >
+    KCH
+  </text>
+</svg>
